@@ -4,6 +4,9 @@ import pandas as pd
 import requests
 import os
 
+movies = pickle.load(open("model/movies.pkl", "rb"))
+st.write(movies['genres'].head()) 
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -61,7 +64,19 @@ def recommend(movie):
 # Streamlit UI
 st.title("🎬 Movie Recommender System")
 
-movie_name = st.selectbox("Choose a movie", movies['title'].values)
+# Generate list of all unique genres
+all_genres = sorted(set(genre for sublist in movies['genres'] for genre in sublist))
+
+# Genre filter
+selected_genre = st.selectbox("Filter by Genre", ["All"] + all_genres)
+
+# Movie selector based on genre
+if selected_genre == "All":
+    filtered_movies = movies['title'].values
+else:
+    filtered_movies = movies[movies['genres'].apply(lambda x: selected_genre in x)]['title'].values
+
+movie_name = st.selectbox("Choose a movie", filtered_movies)
 
 if st.button("Recommend"):
     names, posters = recommend(movie_name)
