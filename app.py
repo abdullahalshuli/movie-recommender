@@ -4,14 +4,27 @@ import pandas as pd
 import requests
 import os
 
-movies = pickle.load(open("model/movies.pkl", "rb"))
-st.write(movies['genres'].head()) 
+
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Load or rebuild data
 movies = pickle.load(open("model/movies.pkl", "rb"))
+
+similarity_path = "model/similarity.pkl"
+
+if os.path.exists(similarity_path):
+    similarity = pickle.load(open(similarity_path, "rb"))
+else:
+    cv = CountVectorizer(max_features=5000, stop_words='english')
+    vectors = cv.fit_transform(movies['tags']).toarray()
+    similarity = cosine_similarity(vectors)
+    pickle.dump(similarity, open(similarity_path, "wb"))
+
+# ✅ Now safely inspect genres
+st.write(movies.columns)
+
 
 similarity_path = "model/similarity.pkl"
 
