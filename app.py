@@ -1,10 +1,9 @@
 ﻿import streamlit as st
 import pickle
 import pandas as pd
-
+import requests
 import os
-import pickle
-import pandas as pd
+
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -25,14 +24,20 @@ import os
 API_KEY = os.environ.get("TMDB_API_KEY")
 
 def fetch_poster(movie_id):
-    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={API_KEY}&language=en-US"
-    response = requests.get(url)
-    data = response.json()
-    poster_path = data.get('poster_path')
-    if poster_path:
-        return "https://image.tmdb.org/t/p/w500" + poster_path
-    else:
-        return "https://via.placeholder.com/150"
+    if not API_KEY:
+        return "https://via.placeholder.com/150?text=Missing+API+Key"
+
+    try:
+        url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={API_KEY}&language=en-US"
+        response = requests.get(url)
+        data = response.json()
+        poster_path = data.get('poster_path')
+        if poster_path:
+            return "https://image.tmdb.org/t/p/w500" + poster_path
+    except:
+        pass
+    
+    return "https://via.placeholder.com/150?text=No+Poster"
 
 # Load saved movie data and similarity matrix
 movies = pickle.load(open('model/movies.pkl', 'rb'))
