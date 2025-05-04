@@ -11,6 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Load or rebuild data
 movies = pickle.load(open("model/movies.pkl", "rb"))
+st.write("📦 Columns in movies.pkl:", movies.columns.tolist())
 
 similarity_path = "model/similarity.pkl"
 
