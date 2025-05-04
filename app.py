@@ -83,10 +83,6 @@ all_genres = sorted(set(genre for sublist in movies['genres'] for genre in subli
 # Genre filter
 selected_genre = st.selectbox("Filter by Genre", ["All"] + all_genres)
 
-# 🎞️ Genre filter
-all_genres = sorted(set(g for sublist in movies['genres'] for g in sublist))
-selected_genre = st.selectbox("🎞️ Filter by Genre", ["All"] + all_genres)
-
 # Movie selector based on genre
 if selected_genre == "All":
     filtered_movies = movies['title'].values
