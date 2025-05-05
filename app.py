@@ -37,10 +37,11 @@ def fetch_poster(movie_id):
             return "https://image.tmdb.org/t/p/w500" + poster_path
     except:
         pass
-    
+
     return "https://via.placeholder.com/150?text=No+Poster"
 
-    def fetch_trailer(movie_id):
+
+def fetch_trailer(movie_id):  # ✅ Now properly aligned
     if not API_KEY:
         return None
 
@@ -57,6 +58,7 @@ def fetch_poster(movie_id):
         pass
 
     return None
+
 
 # Load saved movie data and similarity matrix
 movies = pickle.load(open('model/movies.pkl', 'rb'))
