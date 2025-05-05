@@ -3,6 +3,7 @@ import pickle
 import pandas as pd
 import requests
 import os
+import random
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -39,6 +40,24 @@ def fetch_poster(movie_id):
     
     return "https://via.placeholder.com/150?text=No+Poster"
 
+    def fetch_trailer(movie_id):
+    if not API_KEY:
+        return None
+
+    try:
+        url = f"https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={API_KEY}&language=en-US"
+        response = requests.get(url)
+        data = response.json()
+        videos = data.get('results', [])
+
+        for video in videos:
+            if video['site'] == 'YouTube' and video['type'] == 'Trailer':
+                return f"https://www.youtube.com/watch?v={video['key']}"
+    except:
+        pass
+
+    return None
+
 # Load saved movie data and similarity matrix
 movies = pickle.load(open('model/movies.pkl', 'rb'))
 similarity = pickle.load(open('model/similarity.pkl', 'rb'))
@@ -50,13 +69,16 @@ def recommend(movie):
 
     recommended_titles = []
     recommended_posters = []
+    recommended_trailers = []
 
     for i in movies_list:
         movie_id = movies.iloc[i[0]].movie_id
         recommended_titles.append(movies.iloc[i[0]].title)
         recommended_posters.append(fetch_poster(movie_id))
+        recommended_trailers.append(fetch_trailer(movie_id))
 
-    return recommended_titles, recommended_posters
+    return recommended_titles, recommended_posters, recommended_trailers
+
 
 # Streamlit UI
 st.title("🎬 Movie Recommender System")
@@ -75,9 +97,24 @@ else:
 
 movie_name = st.selectbox("Choose a movie", filtered_movies)
 
-if st.button("Recommend"):
-    names, posters = recommend(movie_name)
+col1, col2 = st.columns(2)
 
+names = []
+posters = []
+trailers = []
+
+with col1:
+    if st.button("🎯 Recommend"):
+        names, posters, trailers = recommend(movie_name)
+
+with col2:
+    if st.button("🎲 Surprise Me"):
+        random_movie = random.choice(filtered_movies)
+        st.info(f"Randomly selected: **{random_movie}**")
+        names, posters, trailers = recommend(random_movie)
+
+# ✅ Display the results if we have recommendations
+if names:
     cols_per_row = 5
     for i in range(0, len(names), cols_per_row):
         cols = st.columns(cols_per_row)
@@ -86,5 +123,9 @@ if st.button("Recommend"):
                 with cols[j]:
                     st.image(posters[i + j])
                     st.caption(names[i + j])
+                    if trailers[i + j]:
+                        st.video(trailers[i + j])
+
+
 
   
