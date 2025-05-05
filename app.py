@@ -20,20 +20,6 @@ else:
     similarity = cosine_similarity(vectors)
     pickle.dump(similarity, open(similarity_path, "wb"))
 
-# ✅ Now safely inspect genres
-st.write(movies.columns)
-
-
-similarity_path = "model/similarity.pkl"
-
-if os.path.exists(similarity_path):
-    similarity = pickle.load(open(similarity_path, "rb"))
-else:
-    cv = CountVectorizer(max_features=5000, stop_words='english')
-    vectors = cv.fit_transform(movies['tags']).toarray()
-    similarity = cosine_similarity(vectors)
-    pickle.dump(similarity, open(similarity_path, "wb"))
-
 import os
 API_KEY = os.environ.get("TMDB_API_KEY")
 
