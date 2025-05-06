@@ -22,7 +22,8 @@ else:
     pickle.dump(similarity, open(similarity_path, "wb"))
 
 import os
-API_KEY = os.environ.get("TMDB_API_KEY")
+API_KEY = "f0249facbfe56cb47ba8f7689faa6d13"
+
 
 def fetch_poster(movie_id):
     if not API_KEY:
