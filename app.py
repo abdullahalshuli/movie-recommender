@@ -30,7 +30,7 @@ else:
     pickle.dump(similarity, open(similarity_path, "wb"))
 
 import os, streamlit as st
-API_KEY = os.environ.get("TMDB_API_KEY") or st.secrets["TMDB_API_KEY"]
+API_KEY = os.environ.get("API_KEY") or st.secrets["API_KEY"]
 
 def fetch_movie_details(movie_id):
     if not API_KEY:
