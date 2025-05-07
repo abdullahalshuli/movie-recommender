@@ -29,9 +29,8 @@ else:
     similarity = cosine_similarity(vectors)
     pickle.dump(similarity, open(similarity_path, "wb"))
 
-import os
-API_KEY = "f0249facbfe56cb47ba8f7689faa6d13"
-
+import os, streamlit as st
+API_KEY = os.environ.get("TMDB_API_KEY") or st.secrets["TMDB_API_KEY"]
 
 def fetch_movie_details(movie_id):
     if not API_KEY:
