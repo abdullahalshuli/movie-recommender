@@ -20,8 +20,7 @@ Choose a movie, filter by genre, get intelligent recommendations, and view poste
 ---
 
 ## Demo
- [Live App on Streamlit Cloud](https://your-username.streamlit.app)
-
+https://movie-matchmaker.streamlit.app/
 ---
 
 ## Setup Instructions
