@@ -8,7 +8,6 @@ import random
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-# Load or rebuild data
 movies = pickle.load(open("model/movies.pkl", "rb"))
 
 similarity_path = "model/similarity.pkl"
@@ -19,7 +18,6 @@ if "base_movie" not in st.session_state:
     st.session_state.base_movie = ""
 if "recommendations" not in st.session_state:
     st.session_state.recommendations = {"names": [], "posters": [], "trailers": []}
-
 
 if os.path.exists(similarity_path):
     similarity = pickle.load(open(similarity_path, "rb"))
@@ -67,10 +65,7 @@ def fetch_movie_details(movie_id):
             "imdb_id": None
         }
 
-
-
-
-def fetch_trailer(movie_id):  # ✅ Now properly aligned
+def fetch_trailer(movie_id): 
     if not API_KEY:
         return None
 
@@ -88,11 +83,8 @@ def fetch_trailer(movie_id):  # ✅ Now properly aligned
 
     return None
 
-
-# Load saved movie data and similarity matrix
 movies = pickle.load(open('model/movies.pkl', 'rb'))
 similarity = pickle.load(open('model/similarity.pkl', 'rb'))
-
 
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
@@ -113,7 +105,6 @@ def recommend(movie):
         movie_id = movies.iloc[i[0]].movie_id
         recommended_titles.append(movies.iloc[i[0]].title)
 
-        # Fetch movie details
         details = fetch_movie_details(movie_id)
 
         recommended_posters.append(details["poster"])
@@ -121,7 +112,6 @@ def recommend(movie):
         recommended_genres.append(details["genres"])
         recommended_trailers.append(fetch_trailer(movie_id))
 
-        # TMDb and IMDb links
         recommended_links.append(f"https://www.themoviedb.org/movie/{movie_id}")
         imdb_id = details.get("imdb_id")
         recommended_imdb.append(f"https://www.imdb.com/title/{imdb_id}" if imdb_id else "")
@@ -136,25 +126,19 @@ def recommend(movie):
         recommended_imdb
     )
 
-
-
-# Streamlit UI
 st.title("🎬 Movie Recommender System")
 
-# Generate list of all unique genres
 all_genres = sorted(set(genre for sublist in movies['genres'] for genre in sublist))
 
-# Genre filter
 selected_genre = st.selectbox("Filter by Genre", ["All"] + all_genres)
 
-# Movie selector based on genre
 if selected_genre == "All":
     filtered_movies = movies['title'].values
 else:
     filtered_movies = movies[movies['genres'].apply(lambda x: selected_genre in x)]['title'].values
 
 if "selected_movie" not in st.session_state:
-    st.session_state.selected_movie = filtered_movies[0]  # default value
+    st.session_state.selected_movie = filtered_movies[0]  
 
 if "favorites" not in st.session_state:
     if os.path.exists("favorites.txt"):
@@ -162,7 +146,6 @@ if "favorites" not in st.session_state:
             st.session_state.favorites = [line.strip() for line in f.readlines()]
     else:
         st.session_state.favorites = []
-
 
 movie_name = st.selectbox(
     "Choose a movie", 
@@ -192,7 +175,6 @@ with col1:
     "imdb": imdb_links
 }
 
-
 with col2:
     if st.button("🎲 Surprise Me", key="surprise"):
         random_movie = random.choice(filtered_movies)
@@ -210,7 +192,6 @@ with col2:
     "imdb": imdb_links
 }
 
-# ✅ Render Shuffle Again only if there's something to shuffle
 with col3:
     if (
         "recommendations" in st.session_state and
@@ -229,8 +210,6 @@ with col3:
     "imdb": imdb_links
 }
 
-
-# ✅ Display the results if we have recommendations
 if st.session_state.recommendations["names"]:
     names = st.session_state.recommendations["names"]
     posters = st.session_state.recommendations["posters"]
